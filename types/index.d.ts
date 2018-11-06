@@ -1,3 +1,10 @@
+/**
+ * typescript 类型定义文件
+ * 在此文件里 declare声明了 store类 及以下的方法 规范化调用
+ * 以及dispatchOptions commitOptions等接口类型 
+ * 此声明文件先不做深入理解 待typescript深入学习熟练后再做逐行注释
+ */
+
 import _Vue, { WatchOptions } from "vue";
 
 // augment typings of Vue.js

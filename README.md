@@ -1,29 +1,16 @@
-# Vuex [![Build Status](https://circleci.com/gh/vuejs/vuex/tree/dev.png?style=shield)](https://circleci.com/gh/vuejs/vuex)
+# Vuex 源码学习
+> vuejs状态管理库 行级分析代码去学习
 
-> Centralized State Management for Vue.js.
-
-<p align="center">
-  <img width="700px" src="https://raw.githubusercontent.com/vuejs/vuex/dev/docs/.vuepress/public/vuex.png">
-</p>
-
-- [What is Vuex?](https://vuex.vuejs.org/)
+- [docs](https://vuex.vuejs.org/)
 - [Full Documentation](http://vuex.vuejs.org/)
 
-## Examples
-
-- [Counter](https://github.com/vuejs/vuex/tree/dev/examples/counter)
-- [Counter with Hot Reload](https://github.com/vuejs/vuex/tree/dev/examples/counter-hot)
-- [TodoMVC](https://github.com/vuejs/vuex/tree/dev/examples/todomvc)
-- [Flux Chat](https://github.com/vuejs/vuex/tree/dev/examples/chat)
-- [Shopping Cart](https://github.com/vuejs/vuex/tree/dev/examples/shopping-cart)
-
-Running the examples:
-
-``` bash
-$ npm install
-$ npm run dev # serve examples at localhost:8080
+# 整体架构预览
+```
+  store.js 封装 Store 和 install
+  helper.js 封装 mapActions 等方法
+  index.js 中export到外部
 ```
 
-## License
-
-[MIT](http://opensource.org/licenses/MIT)
+```
+  作者还是比较人性化的 写的docs很易懂
+```

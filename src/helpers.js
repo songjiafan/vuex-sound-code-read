@@ -139,8 +139,8 @@ function normalizeMap (map) {
  * @param {Function} fn
  * @return {Function}
  */
-function normalizeNamespace (fn) {
-  return (namespace, map) => {
+function normalizeNamespace (fn) { // 命名空间函数
+  return (namespace, map) => { // 实际上是一个修饰的柯理化函数 
     if (typeof namespace !== 'string') {
       map = namespace
       namespace = ''
