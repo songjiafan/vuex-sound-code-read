@@ -1,3 +1,7 @@
+/**
+ * vuex的核心 store
+ * 核心是一个store类 构造的时候 new vuex.store({ action, state })
+ */
 import applyMixin from './mixin'
 import devtoolPlugin from './plugins/devtool'
 import ModuleCollection from './module/module-collection'
@@ -11,23 +15,28 @@ export class Store {
     // To allow users to avoid auto-installation in some cases,
     // this code should be placed here. See #731
     if (!Vue && typeof window !== 'undefined' && window.Vue) {
-      install(window.Vue)
+      install(window.Vue) // 如果没有安装vue 绑定一个 Install方法在代码尾部
     }
 
     if (process.env.NODE_ENV !== 'production') {
       assert(Vue, `must call Vue.use(Vuex) before creating a store instance.`)
       assert(typeof Promise !== 'undefined', `vuex requires a Promise polyfill in this browser.`)
+      // 如果浏览器没有Promise 需要加个polyfill垫片 保证正确使用
       assert(this instanceof Store, `store must be called with the new operator.`)
     }
 
     const {
-      plugins = [],
+      plugins = [], // 实例化store时会传入插件数组
       strict = false
+      /**
+       * 严格模式 非严格模式下 this.$store.state.xxx = xx 可以直接修改store中的值 不规范
+       * 严格模式下 只有mutation可以修改state 这也是正确的用法
+       */
     } = options
 
     // store internal state
     this._committing = false
-    this._actions = Object.create(null)
+    this._actions = Object.create(null) // 这个方法一般用来做继承 继承null 代表没有原型指向
     this._actionSubscribers = []
     this._mutations = Object.create(null)
     this._wrappedGetters = Object.create(null)
@@ -36,6 +45,7 @@ export class Store {
     this._subscribers = []
     this._watcherVM = new Vue()
 
+
     // bind commit and dispatch to self
     const store = this
     const { dispatch, commit } = this
@@ -43,7 +53,7 @@ export class Store {
       return dispatch.call(store, type, payload)
     }
     this.commit = function boundCommit (type, payload, options) {
-      return commit.call(store, type, payload, options)
+      return commit.call(store, type, payload, options) // 绑定this指向store
     }
 
     // strict mode
@@ -69,11 +79,11 @@ export class Store {
     }
   }
 
-  get state () {
+  get state () { // 对象的get 方法 获取当前state树对象
     return this._vm._data.$$state
   }
 
-  set state (v) {
+  set state (v) { // set方法 开发模式下 console一行字
     if (process.env.NODE_ENV !== 'production') {
       assert(false, `use store.replaceState() to explicit replace store state.`)
     }
@@ -81,6 +91,10 @@ export class Store {
 
   commit (_type, _payload, _options) {
     // check object-style commit
+    /**
+     * commit方法的三个三个参数
+     * @param _type 
+     */
     const {
       type,
       payload,
@@ -114,6 +128,11 @@ export class Store {
   }
 
   dispatch (_type, _payload) {
+    /**
+     * dispatch方法
+     * @param _type 要去触发的action名
+     * @param _payload 载荷
+     */
     // check object-style dispatch
     const {
       type,
@@ -137,6 +156,10 @@ export class Store {
   }
 
   subscribe (fn) {
+    /**
+     * mutation 订阅方法 会在每个mutation执行后调用 具体如何调用可以参考commit方法
+     * @param {function}
+     */
     return genericSubscribe(fn, this._subscribers)
   }
 
@@ -199,14 +222,15 @@ export class Store {
   }
 }
 
-function genericSubscribe (fn, subs) {
+function genericSubscribe (fn, subs) { 
   if (subs.indexOf(fn) < 0) {
+    // 监听队列里如果没有这个函数 添加到队列里
     subs.push(fn)
   }
   return () => {
-    const i = subs.indexOf(fn)
+    const i = subs.indexOf(fn) // 获取函数在监听队列的位置
     if (i > -1) {
-      subs.splice(i, 1)
+      subs.splice(i, 1) // 消费队列
     }
   }
 }
@@ -242,7 +266,7 @@ function resetStoreVM (store, state, hot) {
   // use a Vue instance to store the state tree
   // suppress warnings just in case the user has added
   // some funky global mixins
-  const silent = Vue.config.silent
+  const silent = Vue.config.silent // 用于警告
   Vue.config.silent = true
   store._vm = new Vue({
     data: {
@@ -466,7 +490,15 @@ function unifyObjectStyle (type, payload, options) {
 
   return { type, payload, options }
 }
-
+/**
+ * install方法 
+ * 经阅读vue源码可知（我并没有阅读 百度上查的）会被Vue.use使用 暴露在外的install方法被index.js抛出
+ * 代码顶部声明了一个空的Vue 逻辑判断 如果声明的vue是install的实例vue 就直接return
+ * 否则赋值给这个undefined Vue 然后执行applyMixin方法 
+ * mixin方法在mixin.js中定义 此处不做解释 
+ * 
+ * tips 这种有个好处是 不用Import Vue 减小打包体积 
+ */
 export function install (_Vue) {
   if (Vue && _Vue === Vue) {
     if (process.env.NODE_ENV !== 'production') {
@@ -477,5 +509,5 @@ export function install (_Vue) {
     return
   }
   Vue = _Vue
-  applyMixin(Vue)
+  applyMixin(Vue) 
 }

@@ -16,7 +16,7 @@ export function createMessage ({ text, thread }, cb) {
     timestamp,
     threadID: thread.id,
     threadName: thread.name,
-    authorName: 'Evan'
+    authorName: 'Evan' // 给尤大神致敬
   }
   setTimeout(function () {
     cb(message)

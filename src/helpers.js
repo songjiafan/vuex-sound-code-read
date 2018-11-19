@@ -4,23 +4,39 @@
  * @param {Object|Array} states # Object's item can be a function which accept state and getters for param, you can do something for state and getters in it.
  * @param {Object}
  */
+
+ /**
+  * mapState 首先从用法分析代码结构
+  * 一般的用法是 
+  * computed: {
+  *   ...mapState(['state']),
+  *   （实际上有个es6的语法糖映射 在当前vue组件里生成一个计算属性）
+  *   返回的是一个对象 ... 拆解为计算属性键值对
+  *   @param { String Array } 命名空间 需要map出来的state数组
+  *   1 定义返回值对象 res
+  *   2 遍历mapState传进去的参数 定义key （Number）
+  *   3 缓存state getter对象 
+  *   4 如果有命名空间的话 调用getModuleByNamespace 
+  *   5 读取module下文 state
+  * }
+  */
 export const mapState = normalizeNamespace((namespace, states) => {
   const res = {}
   normalizeMap(states).forEach(({ key, val }) => {
-    res[key] = function mappedState () {
+    res[key] = function mappedState () { // 此处定义了一个非匿名函数给key赋值 实际上没有作用
       let state = this.$store.state
       let getters = this.$store.getters
       if (namespace) {
-        const module = getModuleByNamespace(this.$store, 'mapState', namespace)
+        const module = getModuleByNamespace(this.$store, 'mapState', namespace) // module从命名空间读取
         if (!module) {
           return
         }
         state = module.context.state
         getters = module.context.getters
       }
-      return typeof val === 'function'
+      return typeof val === 'function' // 判断属性如果是函数 则改变函数this指向 立即调用
         ? val.call(this, state, getters)
-        : state[val]
+        : state[val] // 
     }
     // mark vuex getter for devtools
     res[key].vuex = true
